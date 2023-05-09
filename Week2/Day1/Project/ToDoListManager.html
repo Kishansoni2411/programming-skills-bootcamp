@@ -2,212 +2,152 @@
 <html>
 
 <head>
-    <title>ToDo List with JavaScript</title>
-    <style type="text/css">
-        /* Set global font and background color */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-        }
-
-        /* Style the heading */
-        h1 {
+    <title>To-Do List</title>
+    
+    <style>
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
             text-align: center;
-            color: #333;
         }
 
-        /* Style the input and button */
-        input[type="text"],
-        button {
-            padding: 8px;
-            margin: 5px;
-            border: none;
-            border-radius: 3px;
-            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 24px;
         }
 
         input[type="text"] {
-            width: 70%;
+            font-size: 24px;
+            padding: 10px;
+            border: burlywood;
+            border-radius: 5px;
+            margin-right: 10px;
         }
 
         button {
+            font-size: 24px;
+            padding: 10px 20px;
             background-color: #4CAF50;
             color: #fff;
-            cursor: pointer;
+            border: none;
+            border-radius: 5px;
         }
 
         button:hover {
             background-color: #3e8e41;
         }
 
-        /* Style the list container */
-        #list-container {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Style the list items */
-        #list-container li {
-            background-color: #fff;
+        li {
+            font-size: 24px;
             padding: 10px;
-            margin: 5px;
-            border-radius: 3px;
-            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
         }
 
-        /* Style the completed items */
-        #list-container li.completed {
-            text-decoration: line-through;
-            color: #999;
+        li span {
+            margin-right: 10px;
         }
 
-        /* Style the action buttons */
-        #list-container button {
-            margin-left: 10px;
-            background-color: #ddd;
-            color: #333;
+        li button {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
         }
 
-        #list-container button:hover {
-            background-color: #ccc;
+        li button:hover {
+            background-color: #da190b;
         }
     </style>
 </head>
 
 <body>
-    <h1>ToDo List with JavaScript</h1>
-    <div>
-        <label for="add-item">Add Item:</label>
-        <input type="text" id="add-item" placeholder="Enter item name">
-        <button id="add-btn">Add</button>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <form id="toDoForm">
+            <label for="newToDo">Add Task:</label>
+            <input type="text" id="newToDo" placeholder="#ADD NEW TASK">
+            <button type="submit" id="addBtn">Add</button>
+        </form>
+        <ul id="toDoList">
+        </ul>
     </div>
-    <div>
-        <label for="filter-items">Filter Items:</label>
-        <input type="text" id="filter-items" placeholder="Search...">
-    </div>
-    <ul id="list-container">
-        <!-- ToDo list items will be added here -->
-    </ul>
     <script>
-        // Get references to the elements
-        const addItemInput = document.getElementById("add-item");
-        const addBtn = document.getElementById("add-btn");
-        const filterItemsInput = document.getElementById("filter-items");
-        const listContainer = document.getElementById("list-container");
+       
+        const toDoForm = document.querySelector("#toDoForm");
+        const newToDoInput = document.querySelector("#newToDo");
+        const toDoList = document.querySelector("#toDoList");
 
-        // Define a variable to store the items
-        let items = [];
+       
+        let toDoItems = [];
 
-        // Add event listener to the Add button
-        addBtn.addEventListener("click", () => {
-            // Get the value of the input field
-            const itemName = addItemInput.value;
+       
+        toDoForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const toDoText = newToDoInput.value.trim();
+            if (toDoText === "") {
+                alert("Please enter a task");
+                return;
+            }
+            addToDoItem(toDoText);
+            newToDoInput.value = "";
+        });
 
-            // If the input field is not empty
-            if (itemName.trim() !== "") {
-                // Add the item to the items array
-                items.push({ name: itemName, completed: false });
+       
+        function addToDoItem(toDoText) {
+            const toDoItem = {
+                id: Date.now(),
+                text: toDoText,
+            };
+            toDoItems.push(toDoItem);
+            renderToDoItem(toDoItem);
+        }
 
-                // Clear the input field
-                addItemInput.value = "";
+        
+        function renderToDoItem(toDoItem) {
+            const li = document.createElement("li");
+            li.dataset.id = toDoItem.id;
+            li.innerHTML = `<span>${toDoItem.text}</span>
+					<button class="editBtn">Edit</button>
+					<button class="deleteBtn">Delete</button>`;
+            toDoList.appendChild(li);
+        }
 
-                // Update the list
-                updateList();
+        
+        toDoList.addEventListener("click", function (event) {
+            const li = event.target.closest("li");
+            if (event.target.classList.contains("editBtn")) {
+                editToDoItem(li);
+            } else if (event.target.classList.contains("deleteBtn")) {
+                deleteToDoItem(li);
             }
         });
 
-        // Add event listener to the Filter input field
-        filterItemsInput.addEventListener("input", () => {
-            // Update the list
-            updateList();
-        });
+      
+        function editToDoItem(li) {
+            const span = li.querySelector("span");
+            const editText = prompt("Edit task", span.textContent);
+            if (editText === null || editText.trim() === "") {
+                return;
+            }
+            span.textContent = editText;
+            const toDoItem = toDoItems.find(item => item.id === +li.dataset.id);
+            toDoItem.text = editText;
+        }
 
-        // Function to update the list
-        const updateList = () => {
-            // Clear the list container
-            listContainer.innerHTML = "";
+   
+        function deleteToDoItem(li) {
+            toDoList.removeChild(li);
+            toDoItems = toDoItems.filter(item => item.id !== +li.dataset.id);
+        }
 
-            // Get the filtered items
-            const filteredItems = items.filter(item => item.name.toLowerCase().includes(filterItemsInput.value.toLowerCase()));
-
-            // Loop through the filtered items and create an <li> element for each
-            filteredItems.forEach((item, index) => {
-                // Create the <li> element
-                const listItem = document.createElement("li");
-
-                // Add the item name to the <li> element
-                listItem.innerText = item.name;
-
-                // Add classes to the <li> element based on the completion status of the item
-                if (item.completed) {
-                    listItem.classList.add("completed");
-                } else {
-                    listItem.classList.remove("completed");
-                }
-
-                // Add data-index attribute to the <li> element to keep track of its index in the items array
-                listItem.setAttribute("data-index", index);
-
-                // Create a button to mark the item as completed
-                const completeBtn = document.createElement("button");
-                completeBtn.innerText = "Complete";
-
-                // Add event listener to the Complete button
-                completeBtn.addEventListener("click", () => {
-                    // Toggle the completion status of the item
-                    items[index].completed = !items[index].completed;
-
-                    // Update the list
-                    updateList();
-                });
-
-                // Create a button to edit the item
-                const editBtn = document.createElement("button");
-                editBtn.innerText = "Edit";
-
-                // Add event listener to the Edit button
-                editBtn.addEventListener("click", () => {
-                    // Get the current item name
-                    const currentName = items[index].name;
-
-                    // Prompt the user to enter a new name for the item
-                    const newName = prompt("Enter a new name for the item : " + currentName);
-                    // If the user entered a new name
-                    if (newName !== null && newName.trim() !== "") {
-                        // Update the item name
-                        items[index].name = newName;
-
-                        // Update the list
-                        updateList();
-                    }
-                });
-
-                // Create a button to delete the item
-                const deleteBtn = document.createElement("button");
-                deleteBtn.innerText = "Delete";
-
-                // Add event listener to the Delete button
-                deleteBtn.addEventListener("click", () => {
-                    // Remove the item from the items array
-                    items.splice(index, 1);
-
-                    // Update the list
-                    updateList();
-                });
-
-                // Add the buttons to the <li> element
-                listItem.appendChild(completeBtn);
-                listItem.appendChild(editBtn);
-                listItem.appendChild(deleteBtn);
-
-                // Add the <li> element to the list container
-                listContainer.appendChild(listItem);
-            });
-        };
     </script>
 </body>
 
