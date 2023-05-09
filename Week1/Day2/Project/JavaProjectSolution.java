@@ -6,14 +6,11 @@ class JavaProjectSolution {
         String password = "123";
         String userEmail = "demo1@email.com";
         String userPassword = "234";
-        if(email.equals(userEmail)){
-            if(password.equals(userPassword)){
-                System.out.println("Success");
-            }else{
-                System.out.println("Wrong Credentials");
-            }
-        }else{
-            System.out.println("Wrong Credentials");
+        if (userEmail.equals(email) && userPassword.equals(password)) {
+            System.out.println("Login successful.");
+        } else {
+            System.out.println("Wrong credentials.");
         }
+        
     }
 }
