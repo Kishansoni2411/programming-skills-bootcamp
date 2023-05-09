@@ -2,21 +2,21 @@ package Week1.Day3.Project;
 
 import java.util.Scanner;
 
-class Login {
+class LoginSystem {
     
     private String email;
     private String password;
     Scanner sc = new Scanner(System.in);
 
     public void setCredentials(){
-        email="test@email.com";
+        email="xyz@email.com";
         password="password";
     }
 
     public void signin() {
-        System.out.print("Enter Email: ");
+        System.out.print("Enter Your Email: ");
         String userEmail = sc.nextLine();
-        System.out.print("Enter Password: ");
+        System.out.print("Enter Your Password: ");
         String userPassword = sc.nextLine();
 
         if (email.equals(userEmail) && password.equals(userPassword)) {
@@ -27,9 +27,9 @@ class Login {
     }
    
 }
-public class LoginSystem{
+public class Login{
     public static void main(String[] args) {
-        Login login = new Login();
+        LoginSystem login = new LoginSystem();
         login.setCredentials();
         login.signin();
     }
